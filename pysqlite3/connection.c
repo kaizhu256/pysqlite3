@@ -1254,62 +1254,62 @@ static PyObject* pysqlite_connection_set_authorizer(pysqlite_Connection* self, P
     Py_RETURN_NONE;
 }
 
-static PyObject* pysqlite_connection_set_progress_handler(pysqlite_Connection* self, PyObject* args, PyObject* kwargs)
-{
-    PyObject* progress_handler;
-    int n;
+//!! static PyObject* pysqlite_connection_set_progress_handler(pysqlite_Connection* self, PyObject* args, PyObject* kwargs)
+//!! {
+    //!! PyObject* progress_handler;
+    //!! int n;
 
-    static char *kwlist[] = { "progress_handler", "n", NULL };
+    //!! static char *kwlist[] = { "progress_handler", "n", NULL };
 
-    if (!pysqlite_check_thread(self) || !pysqlite_check_connection(self)) {
-        return NULL;
-    }
+    //!! if (!pysqlite_check_thread(self) || !pysqlite_check_connection(self)) {
+        //!! return NULL;
+    //!! }
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "Oi:set_progress_handler",
-                                      kwlist, &progress_handler, &n)) {
-        return NULL;
-    }
+    //!! if (!PyArg_ParseTupleAndKeywords(args, kwargs, "Oi:set_progress_handler",
+                                      //!! kwlist, &progress_handler, &n)) {
+        //!! return NULL;
+    //!! }
 
-    if (progress_handler == Py_None) {
-        /* None clears the progress handler previously set */
-        sqlite3_progress_handler(self->db, 0, 0, (void*)0);
-        Py_XSETREF(self->function_pinboard_progress_handler, NULL);
-    } else {
-        sqlite3_progress_handler(self->db, n, _progress_handler, progress_handler);
-        Py_INCREF(progress_handler);
-        Py_XSETREF(self->function_pinboard_progress_handler, progress_handler);
-    }
+    //!! if (progress_handler == Py_None) {
+        //!! /* None clears the progress handler previously set */
+        //!! sqlite3_progress_handler(self->db, 0, 0, (void*)0);
+        //!! Py_XSETREF(self->function_pinboard_progress_handler, NULL);
+    //!! } else {
+        //!! sqlite3_progress_handler(self->db, n, _progress_handler, progress_handler);
+        //!! Py_INCREF(progress_handler);
+        //!! Py_XSETREF(self->function_pinboard_progress_handler, progress_handler);
+    //!! }
 
-    Py_RETURN_NONE;
-}
+    //!! Py_RETURN_NONE;
+//!! }
 
-static PyObject* pysqlite_connection_set_trace_callback(pysqlite_Connection* self, PyObject* args, PyObject* kwargs)
-{
-    PyObject* trace_callback;
+//!! static PyObject* pysqlite_connection_set_trace_callback(pysqlite_Connection* self, PyObject* args, PyObject* kwargs)
+//!! {
+    //!! PyObject* trace_callback;
 
-    static char *kwlist[] = { "trace_callback", NULL };
+    //!! static char *kwlist[] = { "trace_callback", NULL };
 
-    if (!pysqlite_check_thread(self) || !pysqlite_check_connection(self)) {
-        return NULL;
-    }
+    //!! if (!pysqlite_check_thread(self) || !pysqlite_check_connection(self)) {
+        //!! return NULL;
+    //!! }
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O:set_trace_callback",
-                                      kwlist, &trace_callback)) {
-        return NULL;
-    }
+    //!! if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O:set_trace_callback",
+                                      //!! kwlist, &trace_callback)) {
+        //!! return NULL;
+    //!! }
 
-    if (trace_callback == Py_None) {
-        /* None clears the trace callback previously set */
-        sqlite3_trace(self->db, 0, (void*)0);
-        Py_XSETREF(self->function_pinboard_trace_callback, NULL);
-    } else {
-        sqlite3_trace(self->db, _trace_callback, trace_callback);
-        Py_INCREF(trace_callback);
-        Py_XSETREF(self->function_pinboard_trace_callback, trace_callback);
-    }
+    //!! if (trace_callback == Py_None) {
+        //!! /* None clears the trace callback previously set */
+        //!! sqlite3_trace(self->db, 0, (void*)0);
+        //!! Py_XSETREF(self->function_pinboard_trace_callback, NULL);
+    //!! } else {
+        //!! sqlite3_trace(self->db, _trace_callback, trace_callback);
+        //!! Py_INCREF(trace_callback);
+        //!! Py_XSETREF(self->function_pinboard_trace_callback, trace_callback);
+    //!! }
 
-    Py_RETURN_NONE;
-}
+    //!! Py_RETURN_NONE;
+//!! }
 
 #ifdef HAVE_LOAD_EXTENSION
 static PyObject* pysqlite_enable_load_extension(pysqlite_Connection* self, PyObject* args)
@@ -1962,10 +1962,10 @@ static PyMethodDef connection_methods[] = {
     {"load_extension", (PyCFunction)pysqlite_load_extension, METH_VARARGS,
         PyDoc_STR("Load SQLite extension module. Non-standard.")},
     #endif
-    {"set_progress_handler", (PyCFunction)(void(*)(void))pysqlite_connection_set_progress_handler, METH_VARARGS|METH_KEYWORDS,
-        PyDoc_STR("Sets progress handler callback. Non-standard.")},
-    {"set_trace_callback", (PyCFunction)(void(*)(void))pysqlite_connection_set_trace_callback, METH_VARARGS|METH_KEYWORDS,
-        PyDoc_STR("Sets a trace callback called for each SQL statement (passed as unicode). Non-standard.")},
+    //!! {"set_progress_handler", (PyCFunction)(void(*)(void))pysqlite_connection_set_progress_handler, METH_VARARGS|METH_KEYWORDS,
+        //!! PyDoc_STR("Sets progress handler callback. Non-standard.")},
+    //!! {"set_trace_callback", (PyCFunction)(void(*)(void))pysqlite_connection_set_trace_callback, METH_VARARGS|METH_KEYWORDS,
+        //!! PyDoc_STR("Sets a trace callback called for each SQL statement (passed as unicode). Non-standard.")},
     {"execute", (PyCFunction)pysqlite_connection_execute, METH_VARARGS,
         PyDoc_STR("Executes a SQL statement. Non-standard.")},
     {"executemany", (PyCFunction)pysqlite_connection_executemany, METH_VARARGS,
