@@ -1,4 +1,4 @@
-# rm -r build/ && python setup.py build_static build && cp build/lib.win-amd64-cpython-310/pysqlite3/_sqlite3.cp310-win_amd64.pyd pysqlite3/ && python setup.py test
+# rm -rf build/ && python setup.py build_static build && cp build/lib.win-amd64-cpython-310/pysqlite3/_sqlite3.cp310-win_amd64.pyd pysqlite3/ && python setup.py test
 
 # -*- coding: ISO-8859-1 -*-
 # setup.py: the distutils script
@@ -7,7 +7,7 @@ import os
 import setuptools
 import sys
 
-import distutils
+import distutils.command.build_ext
 import setuptools
 
 # If you need to change anything, it should be enough to change setup.cfg.
@@ -24,7 +24,7 @@ sources = [os.path.join('src', source)
 if sys.platform == "darwin":
     os.environ['CFLAGS'] = "-Qunused-arguments"
 
-class AmalgationLibSqliteBuilder(build_ext):
+class AmalgationLibSqliteBuilder(distutils.command.build_ext.build_ext):
     description = "Builds a C extension using a sqlite3 amalgamation"
 
     amalgamation_root = "."
