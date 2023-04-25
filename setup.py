@@ -4,15 +4,10 @@
 # setup.py: the distutils script
 #
 import os
-import setuptools
 import sys
 
 import distutils.command.build_ext
 import setuptools
-
-# If you need to change anything, it should be enough to change setup.cfg.
-
-PACKAGE_NAME = 'pysqlite3'
 
 # Work around clang raising hard error for unused arguments
 if sys.platform == "darwin":
@@ -20,20 +15,10 @@ if sys.platform == "darwin":
 
 class AmalgationLibSqliteBuilder(distutils.command.build_ext.build_ext):
     description = "Builds a C extension using a sqlite3 amalgamation"
-
-    amalgamation_root = "."
-    amalgamation_header = os.path.join(amalgamation_root, 'sqlite3.h')
-    amalgamation_source = os.path.join(amalgamation_root, 'sqlite3.c')
-
-    amalgamation_message = ('Sqlite amalgamation not found. Please download '
-                            'or build the amalgamation and make sure the '
-                            'following files are present in the pysqlite3 '
-                            'folder: sqlite3.h, sqlite3.c')
-
     def build_extension(self, ext):
         ext.define_macros = [
             ('MODULE_NAME', '"pysqlite3.dbapi2"'),
-        # Feature-ful library.
+            # Feature-ful library.
             ('SQLITE_ALLOW_COVERING_INDEX_SCAN', '1'),
             ('SQLITE_ENABLE_FTS3', '1'),
             ('SQLITE_ENABLE_FTS3_PARENTHESIS', '1'),
@@ -47,17 +32,13 @@ class AmalgationLibSqliteBuilder(distutils.command.build_ext.build_ext):
             ('SQLITE_ENABLE_UPDATE_DELETE_LIMIT', '1'),
             ('SQLITE_SOUNDEX', '1'),
             ('SQLITE_USE_URI', '1'),
-        # Always use memory for temp store.
+            # Always use memory for temp store.
             ('SQLITE_TEMP_STORE', '3'),
-        # Increase the maximum number of "host parameters" which SQLite will accept
+            # Increase the maximum number of "host parameters" which SQLite will accept
             ('SQLITE_MAX_VARIABLE_NUMBER', '250000'),
-        # Increase maximum allowed memory-map size to 1TB
+            # Increase maximum allowed memory-map size to 1TB
             ('SQLITE_MAX_MMAP_SIZE', '1099511627776')
         ]
-
-        ext.include_dirs.append(self.amalgamation_root)
-        ext.sources.append(os.path.join(self.amalgamation_root, "sqlite3.c"))
-
         if sys.platform != "win32":
             # Include math library, required for fts5.
             ext.extra_link_args.append("-lm")
@@ -73,9 +54,8 @@ class AmalgationLibSqliteBuilder(distutils.command.build_ext.build_ext):
         self.__dict__[k] = v
 
 
-def get_setup_args():
-    print(sources)
-    return dict(
+if __name__ == "__main__":
+    setuptools.setup(**dict(
         name="pysqlite3",
         version="0.1",
         description="DB-API 2.0 interface for Sqlite 3.x",
@@ -93,14 +73,14 @@ def get_setup_args():
                 "pysqlite3/util.c",
                 "pysqlite3/row.c",
                 "pysqlite3/blob.c",
+                "sqlite3.c",
             ],
             )
+        ],
+        include_dirs=[
+            "."
         ],
         cmdclass={
             "build_static": AmalgationLibSqliteBuilder
         }
-    )
-
-
-if __name__ == "__main__":
-    setuptools.setup(**get_setup_args())
+    ))
