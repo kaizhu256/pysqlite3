@@ -19,9 +19,6 @@ sources = [os.path.join('src', source)
                           "microprotocols.c", "prepare_protocol.c",
                           "statement.c", "util.c", "row.c", "blob.c"]]
 
-# define packages
-packages = [PACKAGE_NAME]
-
 # Work around clang raising hard error for unused arguments
 if sys.platform == "darwin":
     os.environ['CFLAGS'] = "-Qunused-arguments"
@@ -123,29 +120,15 @@ class AmalgationLibSqliteBuilder(build_ext):
 
 def get_setup_args():
     return dict(
-        name=PACKAGE_NAME,
+        name="pysqlite3",
         version="0.1",
         description="DB-API 2.0 interface for Sqlite 3.x",
-        license="zlib/libpng",
-        platforms="ALL",
-        url="https://github.com/coleifer/pysqlite3",
         package_dir={"pysqlite3": "pysqlite3"},
         ext_modules=[Extension(
             name="pysqlite3._sqlite3",
             sources=sources,
             define_macros=define_macros)
         ],
-        classifiers=[
-            "Development Status :: 4 - Beta",
-            "Intended Audience :: Developers",
-            "License :: OSI Approved :: zlib/libpng License",
-            "Operating System :: MacOS :: MacOS X",
-            "Operating System :: Microsoft :: Windows",
-            "Operating System :: POSIX",
-            "Programming Language :: C",
-            "Programming Language :: Python",
-            "Topic :: Database :: Database Engines/Servers",
-            "Topic :: Software Development :: Libraries :: Python Modules"],
         cmdclass={
             "build_static": AmalgationLibSqliteBuilder,
             "build_ext": SystemLibSqliteBuilder
