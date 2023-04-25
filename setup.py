@@ -7,9 +7,8 @@ import os
 import setuptools
 import sys
 
-from distutils import log
-from distutils.command.build_ext import build_ext
-from setuptools import Extension
+import distutils
+import setuptools
 
 # If you need to change anything, it should be enough to change setup.cfg.
 
@@ -24,29 +23,6 @@ sources = [os.path.join('src', source)
 # Work around clang raising hard error for unused arguments
 if sys.platform == "darwin":
     os.environ['CFLAGS'] = "-Qunused-arguments"
-    log.info("CFLAGS: " + os.environ['CFLAGS'])
-
-
-def quote_argument(arg):
-    q = '\\"' if sys.platform == 'win32' and sys.version_info < (3, 9) else '"'
-    return q + arg + q
-
-define_macros = [('MODULE_NAME', quote_argument(PACKAGE_NAME + '.dbapi2'))]
-
-
-class SystemLibSqliteBuilder(build_ext):
-    description = "Builds a C extension linking against libsqlite3 library"
-
-    def build_extension(self, ext):
-        log.info(self.description)
-
-        # For some reason, when setup.py develop is run, it ignores the
-        # configuration in setup.cfg, so we just explicitly add libsqlite3.
-        # Oddly, running setup.py build_ext -i (for in-place) works fine and
-        # correctly reads the setup.cfg.
-        ext.libraries.append('sqlite3')
-        build_ext.build_extension(self, ext)
-
 
 class AmalgationLibSqliteBuilder(build_ext):
     description = "Builds a C extension using a sqlite3 amalgamation"
@@ -60,48 +36,30 @@ class AmalgationLibSqliteBuilder(build_ext):
                             'following files are present in the pysqlite3 '
                             'folder: sqlite3.h, sqlite3.c')
 
-    def check_amalgamation(self):
-        if not os.path.exists(self.amalgamation_root):
-            os.mkdir(self.amalgamation_root)
-
-        header_exists = os.path.exists(self.amalgamation_header)
-        source_exists = os.path.exists(self.amalgamation_source)
-        if not header_exists or not source_exists:
-            raise RuntimeError(self.amalgamation_message)
-
     def build_extension(self, ext):
-        log.info(self.description)
-
-        # it is responsibility of user to provide amalgamation
-        self.check_amalgamation()
-
+        ext.define_macros = [
+            ('MODULE_NAME', '"pysqlite3.dbapi2"'),
         # Feature-ful library.
-        features = (
-            'ALLOW_COVERING_INDEX_SCAN',
-            'ENABLE_FTS3',
-            'ENABLE_FTS3_PARENTHESIS',
-            'ENABLE_FTS4',
-            'ENABLE_FTS5',
-            'ENABLE_JSON1',
-            'ENABLE_LOAD_EXTENSION',
-            'ENABLE_MATH_FUNCTIONS',
-            'ENABLE_RTREE',
-            'ENABLE_STAT4',
-            'ENABLE_UPDATE_DELETE_LIMIT',
-            'SOUNDEX',
-            'USE_URI',
-        )
-        for feature in features:
-            ext.define_macros.append(('SQLITE_%s' % feature, '1'))
-
+            ('SQLITE_ALLOW_COVERING_INDEX_SCAN', '1'),
+            ('SQLITE_ENABLE_FTS3', '1'),
+            ('SQLITE_ENABLE_FTS3_PARENTHESIS', '1'),
+            ('SQLITE_ENABLE_FTS4', '1'),
+            ('SQLITE_ENABLE_FTS5', '1'),
+            ('SQLITE_ENABLE_JSON1', '1'),
+            ('SQLITE_ENABLE_LOAD_EXTENSION', '1'),
+            ('SQLITE_ENABLE_MATH_FUNCTIONS', '1'),
+            ('SQLITE_ENABLE_RTREE', '1'),
+            ('SQLITE_ENABLE_STAT4', '1'),
+            ('SQLITE_ENABLE_UPDATE_DELETE_LIMIT', '1'),
+            ('SQLITE_SOUNDEX', '1'),
+            ('SQLITE_USE_URI', '1'),
         # Always use memory for temp store.
-        ext.define_macros.append(("SQLITE_TEMP_STORE", "3"))
-
+            ('SQLITE_TEMP_STORE', '3'),
         # Increase the maximum number of "host parameters" which SQLite will accept
-        ext.define_macros.append(("SQLITE_MAX_VARIABLE_NUMBER", "250000"))
-
+            ('SQLITE_MAX_VARIABLE_NUMBER', '250000'),
         # Increase maximum allowed memory-map size to 1TB
-        ext.define_macros.append(("SQLITE_MAX_MMAP_SIZE", str(2**40)))
+            ('SQLITE_MAX_MMAP_SIZE', '1099511627776')
+        ]
 
         ext.include_dirs.append(self.amalgamation_root)
         ext.sources.append(os.path.join(self.amalgamation_root, "sqlite3.c"))
@@ -110,7 +68,8 @@ class AmalgationLibSqliteBuilder(build_ext):
             # Include math library, required for fts5.
             ext.extra_link_args.append("-lm")
 
-        build_ext.build_extension(self, ext)
+        # ext.libraries.append('sqlite3')
+        distutils.command.build_ext.build_ext.build_extension(self, ext)
 
     def __setattr__(self, k, v):
         # Make sure we don't link against the SQLite
@@ -126,14 +85,13 @@ def get_setup_args():
         version="0.1",
         description="DB-API 2.0 interface for Sqlite 3.x",
         package_dir={"pysqlite3": "pysqlite3"},
-        ext_modules=[Extension(
+        ext_modules=[setuptools.Extension(
             name="pysqlite3._sqlite3",
             sources=sources,
-            define_macros=define_macros)
+            )
         ],
         cmdclass={
-            "build_static": AmalgationLibSqliteBuilder,
-            "build_ext": SystemLibSqliteBuilder
+            "build_static": AmalgationLibSqliteBuilder
         }
     )
 
