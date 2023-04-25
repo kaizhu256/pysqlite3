@@ -21,3 +21,5 @@ undefined
 !.gitignore
 !.npmignore
 # base - .gitignore - end
+
+pysqlite3.egg-info/
