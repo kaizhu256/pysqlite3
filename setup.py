@@ -1,4 +1,10 @@
-# rm -rf build/ && python setup.py build_static build && cp build/lib.win-amd64-cpython-310/pysqlite3/_sqlite3.cp310-win_amd64.pyd pysqlite3/ && python setup.py test
+"""
+rm -rf build/ && \
+     python setup.py build_static build && \
+     cp build/lib.win-amd64-cpython-310/pysqlite3/\
+_sqlite3.cp310-win_amd64.pyd pysqlite3/ && \
+     python setup.py test
+"""
 
 # -*- coding: ISO-8859-1 -*-
 # setup.py: the distutils script
