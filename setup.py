@@ -12,7 +12,6 @@ from setuptools import Extension
 # If you need to change anything, it should be enough to change setup.cfg.
 
 PACKAGE_NAME = 'pysqlite3'
-VERSION = '0.5.0'
 
 # define sqlite sources
 sources = [os.path.join('src', source)
@@ -22,7 +21,6 @@ sources = [os.path.join('src', source)
 
 # define packages
 packages = [PACKAGE_NAME]
-EXTENSION_MODULE_NAME = "._sqlite3"
 
 # Work around clang raising hard error for unused arguments
 if sys.platform == "darwin":
@@ -126,18 +124,14 @@ class AmalgationLibSqliteBuilder(build_ext):
 def get_setup_args():
     return dict(
         name=PACKAGE_NAME,
-        version=VERSION,
+        version="0.1",
         description="DB-API 2.0 interface for Sqlite 3.x",
-        long_description='',
-        author="Charles Leifer",
-        author_email="coleifer@gmail.com",
         license="zlib/libpng",
         platforms="ALL",
         url="https://github.com/coleifer/pysqlite3",
-        package_dir={PACKAGE_NAME: "pysqlite3"},
-        packages=packages,
+        package_dir={"pysqlite3": "pysqlite3"},
         ext_modules=[Extension(
-            name=PACKAGE_NAME + EXTENSION_MODULE_NAME,
+            name="pysqlite3._sqlite3",
             sources=sources,
             define_macros=define_macros)
         ],
