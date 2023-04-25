@@ -113,7 +113,6 @@ class AmalgationLibSqliteBuilder(build_ext):
             # Include math library, required for fts5.
             ext.extra_link_args.append("-lm")
 
-        ext.extra_link_args.append("zlibstat.lib")
         build_ext.build_extension(self, ext)
 
     def __setattr__(self, k, v):
