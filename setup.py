@@ -14,12 +14,6 @@ import setuptools
 
 PACKAGE_NAME = 'pysqlite3'
 
-# define sqlite sources
-sources = [os.path.join('src', source)
-           for source in ["module.c", "connection.c", "cursor.c", "cache.c",
-                          "microprotocols.c", "prepare_protocol.c",
-                          "statement.c", "util.c", "row.c", "blob.c"]]
-
 # Work around clang raising hard error for unused arguments
 if sys.platform == "darwin":
     os.environ['CFLAGS'] = "-Qunused-arguments"
@@ -80,6 +74,7 @@ class AmalgationLibSqliteBuilder(distutils.command.build_ext.build_ext):
 
 
 def get_setup_args():
+    print(sources)
     return dict(
         name="pysqlite3",
         version="0.1",
@@ -87,7 +82,18 @@ def get_setup_args():
         package_dir={"pysqlite3": "pysqlite3"},
         ext_modules=[setuptools.Extension(
             name="pysqlite3._sqlite3",
-            sources=sources,
+            sources=[
+                "pysqlite3/module.c",
+                "pysqlite3/connection.c",
+                "pysqlite3/cursor.c",
+                "pysqlite3/cache.c",
+                "pysqlite3/microprotocols.c",
+                "pysqlite3/prepare_protocol.c",
+                "pysqlite3/statement.c",
+                "pysqlite3/util.c",
+                "pysqlite3/row.c",
+                "pysqlite3/blob.c",
+            ],
             )
         ],
         cmdclass={
