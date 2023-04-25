@@ -78,7 +78,11 @@ if __name__ == "__main__":
             )
         ],
         include_dirs=[
-            "."
+            ".",
+            "/usr/include",
+        ],
+        library_dirs=[
+            "/usr/lib",
         ],
         cmdclass={
             "build_static": AmalgationLibSqliteBuilder
