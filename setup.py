@@ -1,15 +1,14 @@
 """
 rm -rf build/ && \
-     python setup.py build_static build && \
+     python setup.py build_ext build && \
      cp build/lib.win-amd64-cpython-310/pysqlite3/\
 _sqlite3.cp310-win_amd64.pyd pysqlite3/ && \
-     python setup.py test.
+     python setup.py test
 """
 
 import os
 import sys
 
-import distutils.command.build_ext
 import setuptools
 
 # Work around clang raising hard error for unused arguments
@@ -27,9 +26,9 @@ if sys.platform != "win32":
 
 if __name__ == "__main__":
     setuptools.setup(**{
-        "cmdclass": {
-            "build_static": distutils.command.build_ext.build_ext,
-        },
+        # !! "cmdclass": {
+            # !! "build_static": setuptools.build_ext,
+        # !! },
         "description": "DB-API 2.0 interface for Sqlite 3.x",
         "ext_modules": [
             setuptools.Extension(
@@ -58,6 +57,9 @@ if __name__ == "__main__":
                     ("SQLITE_MAX_MMAP_SIZE", "1099511627776"),
                 ],
                 extra_link_args=ext["extra_link_args"],
+                libraries=[
+                    "sqlite3_c",
+                ],
                 name="pysqlite3._sqlite3",
                 sources=[
                     "pysqlite3/module.c",
@@ -72,14 +74,15 @@ if __name__ == "__main__":
                     "pysqlite3/blob.c",
                     "sqlite3.c",
                 ],
+                include_dirs=[
+                    ".",
+                    "/usr/include",
+                ],
+                library_dirs=[
+                    ".",
+                    "/usr/lib",
+                ],
             ),
-        ],
-        "include_dirs": [
-            ".",
-            "/usr/include",
-        ],
-        "library_dirs": [
-            "/usr/lib",
         ],
         "name": "pysqlite3",
         "package_dir": {"pysqlite3": "pysqlite3"},
