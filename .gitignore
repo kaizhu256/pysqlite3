@@ -23,3 +23,6 @@ undefined
 # base - .gitignore - end
 
 pysqlite3.egg-info/
+*.o
+lib*
+*.lib
