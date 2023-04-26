@@ -40,9 +40,7 @@ build_ext_option = {
         # Increase maximum allowed memory-map size to 1TB
         ("SQLITE_MAX_MMAP_SIZE", "1099511627776"),
     ],
-    "extra_compile_args": [
-        "/MT",
-    ],
+    "extra_compile_args": [],
     "extra_link_args": [],
     "include_dirs": [
         ".",
@@ -55,6 +53,7 @@ build_ext_option = {
     "libraries": [
         "sqlite3_c",
         "sqlmath_c",
+        "zlib_c",
     ],
     "name": "pysqlite3._sqlite3",
     "sources": [
@@ -71,7 +70,11 @@ build_ext_option = {
         # !! "sqlite3.c",
     ],
 }
-if sys.platform != "win32":
+if sys.platform == "win32":
+    # bugfix - LINK : warning LNK4098: defaultlib 'LIBCMT'
+    # conflicts with use of other libs; use /NODEFAULTLIB:library
+    build_ext_option["extra_compile_args"] += ["/MT"]
+else:
     # Include math library, required for fts5.
     build_ext_option["extra_link_args"] += ["-lm"]
 
