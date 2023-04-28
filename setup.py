@@ -91,6 +91,7 @@ class AmalgationLibSqliteBuilder(build_ext):
             'ENABLE_RTREE',
             'ENABLE_STAT4',
             'ENABLE_UPDATE_DELETE_LIMIT',
+            'SQLITE_OMIT_DEPRECATED',
             'SOUNDEX',
             'USE_URI',
         )
